@@ -3,5 +3,7 @@ import web.views as views
 
 
 urlpatterns = [
-    path('', views.index, name="index")
+    path("", views.home, name="home"),
+    path("<int:id>", views.index, name="index"),
+    path("create/", views.create, name="create"),
     ]

@@ -1,18 +1,53 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Question, Choice
+from .models import Question, Choice, ToDoList, Item
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
+from .forms import CrateNewList
 
 
-def index(request):
-    latest_question_list = Question.objects.order_by('-pub_date')[:5]
-    context = {'latest_question_list': latest_question_list}
-    return render(request, 'web/index.html', context)
+def home(response):
+    return render(response, "web/home.html", {"name":"test"})
+
+
+def index(response, id):
+    ls = ToDoList.objects.get(id=id)
+
+    if response.method == "POST":
+        print(response.POST)
+        if response.POST.get("save"):
+            for item in ls.item_set.all():
+                if response.POST.get("c"+str(item.id)) == "clicked":
+                    item.complete = True
+                else:
+                    item.complete = False
+                item.save()
+
+        elif response.POST.get("newItem"):
+            txt = response.POST.get("new")
+            if len(txt) > 2:
+                ls.item_set.create(text=txt, complete=False)
+            else:
+                print("Invalid")
+    return render(response, "web/list.html", {"ls":ls})
 
 
 def detail(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'web/detail.html', {'question': question})
+
+
+def create(response):
+    if response.method == "POST":
+        form = CrateNewList(response.POST)
+        if form.is_valid():
+            n = form.cleaned_data["name"]
+            t = ToDoList(name=n)
+            t.save()
+
+            return HttpResponseRedirect(f"/{t.id}")
+    else:
+        form = CrateNewList()
+    return render(response, "web/create.html", {"form":form})
 
 
 def vote(request, question_id):
