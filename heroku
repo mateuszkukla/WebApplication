@@ -1,0 +1,12 @@
+Host
+ec2-54-154-101-45.eu-west-1.compute.amazonaws.com
+Database
+d1bet5bt25vovm
+User
+pclxmrjpaxkiaq
+Port
+5432
+Password
+1652cd235a8c8f1fe2b1e66acb89613e5120b7097f087a0f7409ef6728b5e5b9
+URI
+postgres://pclxmrjpaxkiaq:1652cd235a8c8f1fe2b1e66acb89613e5120b7097f087a0f7409ef6728b5e5b9@ec2-54-154-101-45.eu-west-1.compute.amazonaws.com:5432/d1bet5bt25vovm
