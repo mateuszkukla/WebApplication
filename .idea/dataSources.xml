@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:sqlite:C:\Users\keray\PycharmProjects\djangoProject\db.sqlite3</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="ec2-54-154-101-45.eu-west-1.compute.amazonaws.com" uuid="f1c4a4ac-3c0c-4742-936e-c830cc19a8f4">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ec2-54-154-101-45.eu-west-1.compute.amazonaws.com:5432/d1bet5bt25vovm</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
