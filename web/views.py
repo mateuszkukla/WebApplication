@@ -4,11 +4,11 @@ from django.shortcuts import render, get_object_or_404
 # from django.urls import reverse
 from .forms import CrateNewList
 from django.contrib.auth.models import User as Us
-#
-#
+
 
 def home(response):
     return render(response, "web/home.html", {"name": "test"})
+
 
 def index(response, id):
     ls = ToDoList.objects.get(id=id)
