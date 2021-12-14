@@ -1,75 +1,183 @@
-from django.http import HttpResponse, HttpResponseRedirect
-from .models import Food, Meal, User, ToDoList, Item
-from django.shortcuts import render, get_object_or_404
-# from django.urls import reverse
-from .forms import CrateNewList
-from django.contrib.auth.models import User as Us
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .forms import SelectFoodForm, AddFoodForm, CreateUserForm, ProfileForm
+from .models import *
+from datetime import timedelta
+from django.utils import timezone
+from datetime import date
+from datetime import datetime
+from .filters import FoodFilter
 
 
-def home(response):
-    return render(response, "web/home.html", {"name": "test"})
+# home page view
+@login_required(login_url='login')
+def HomePageView(request):
+    # taking the latest profile object
+    calories = Profile.objects.filter(person_of=request.user).last()
+    calorie_goal = calories.calorie_goal
+
+    # creating one profile each day
+    if date.today() > calories.date:
+        profile = Profile.objects.create(person_of=request.user)
+        profile.save()
+
+    calories = Profile.objects.filter(person_of=request.user).last()
+
+    # showing all food consumed present day
+
+    all_food_today = PostFood.objects.filter(profile=calories)
+
+    calorie_goal_status = calorie_goal - calories.total_calorie
+    over_calorie = 0
+    if calorie_goal_status < 0:
+        over_calorie = abs(calorie_goal_status)
+
+    context = {
+        'total_calorie': calories.total_calorie,
+        'calorie_goal': calorie_goal,
+        'calorie_goal_status': calorie_goal_status,
+        'over_calorie': over_calorie,
+        'food_selected_today': all_food_today
+    }
+
+    return render(request, 'home.html', context)
 
 
-def index(response, id):
-    ls = ToDoList.objects.get(id=id)
-    if ls in response.user.todolist.all():
-        if response.method == "POST":
-            print(response.POST)
-            if response.POST.get("save"):
-                for item in ls.item_set.all():
-                    if response.POST.get("c"+str(item.id)) == "clicked":
-                        item.complete = True
-                    else:
-                        item.complete = False
-                    item.save()
-
-            elif response.POST.get("newItem"):
-                txt = response.POST.get("new")
-                if len(txt) > 2:
-                    ls.item_set.create(text=txt, complete=False)
-                else:
-                    print("Invalid")
-        return render(response, "web/list.html", {"ls":ls})
-    return  render(response, "web/view.html", {})
-
-
-
-
-def create(response):
-    if response.method == "POST":
-        form = CrateNewList(response.POST)
-        if form.is_valid():
-            n = form.cleaned_data["name"]
-            t = ToDoList(name=n)
-            t.save()
-            response.user.todolist.add(t)
-
-            return HttpResponseRedirect(f"/{t.id}")
+# signup page
+def RegisterPage(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     else:
-        form = CrateNewList()
-    return render(response, "web/create.html", {"form":form})
+        form = CreateUserForm()
+        if request.method == 'POST':
+            form = CreateUserForm(request.POST)
+            if form.is_valid():
+                form.save()
+                user = form.cleaned_data.get('username')
+                messages.success(request, "Account was created for " + user)
+                return redirect('login')
 
-def view(response):
-    return render(response, 'web/view.html', {})
-# def vote(request, question_id):
-#     question = get_object_or_404(Question, pk=question_id)
-#     try:
-#         selected_choice = question.choice_set.get(pk=request.POST['choice'])
-#     except (KeyError, Choice.DoesNotExist):
-#         # Redisplay the question voting form.
-#         return render(request, 'web/detail.html', {
-#             'question': question,
-#             'error_message': "You didn't select a choice.",
-#         })
-#     else:
-#         selected_choice.votes += 1
-#         selected_choice.save()
-#         # Always return an HttpResponseRedirect after successfully dealing
-#         # with POST data. This prevents data from being posted twice if a
-#         # user hits the Back button.
-#         return HttpResponseRedirect(reverse('results', args=(question.id,)))
-#
-#
-# def results(request, question_id):
-#     question = get_object_or_404(Question, pk=question_id)
-#     return render(request, 'web/results.html', {'question': question})
+        context = {'form': form}
+        return render(request, 'register.html', context)
+
+
+# login page
+def LoginPage(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+            else:
+                messages.info(request, 'Username or password is incorrect')
+        context = {}
+        return render(request, 'login.html', context)
+
+
+# logout page
+def LogOutPage(request):
+    logout(request)
+    return redirect('login')
+
+
+# for selecting food each day
+@login_required
+def select_food(request):
+    person = Profile.objects.filter(person_of=request.user).last()
+    # for showing all food items available
+    food_items = Food.objects.filter(person_of=request.user)
+    form = SelectFoodForm(request.user, instance=person)
+
+    if request.method == 'POST':
+        form = SelectFoodForm(request.user, request.POST, instance=person)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = SelectFoodForm(request.user)
+
+    context = {'form': form, 'food_items': food_items}
+    return render(request, 'select_food.html', context)
+
+
+# for adding new food
+def add_food(request):
+    # for showing all food items available
+    food_items = Food.objects.filter(person_of=request.user)
+    form = AddFoodForm(request.POST)
+    if request.method == 'POST':
+        form = AddFoodForm(request.POST)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.person_of = request.user
+            profile.save()
+            return redirect('add_food')
+    else:
+        form = AddFoodForm()
+    # for filtering food
+    myFilter = FoodFilter(request.GET, queryset=food_items)
+    food_items = myFilter.qs
+    context = {'form': form, 'food_items': food_items, 'myFilter': myFilter}
+    return render(request, 'add_food.html', context)
+
+
+# for updating food given by the user
+@login_required
+def update_food(request, pk):
+    food_items = Food.objects.filter(person_of=request.user)
+
+    food_item = Food.objects.get(id=pk)
+    form = AddFoodForm(instance=food_item)
+    if request.method == 'POST':
+        form = AddFoodForm(request.POST, instance=food_item)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    myFilter = FoodFilter(request.GET, queryset=food_items)
+    context = {'form': form, 'food_items': food_items, 'myFilter': myFilter}
+
+    return render(request, 'add_food.html', context)
+
+
+# for deleting food given by the user
+@login_required
+def delete_food(request, pk):
+    food_item = Food.objects.get(id=pk)
+    if request.method == "POST":
+        food_item.delete()
+        return redirect('profile')
+    context = {'food': food_item, }
+    return render(request, 'delete_food.html', context)
+
+
+# profile page of user
+@login_required
+def ProfilePage(request):
+    # getting the lastest profile object for the user
+    person = Profile.objects.filter(person_of=request.user).last()
+    food_items = Food.objects.filter(person_of=request.user)
+    form = ProfileForm(instance=person)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=person)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=person)
+
+    # querying all records for the last seven days
+    some_day_last_week = timezone.now().date() - timedelta(days=7)
+    records = Profile.objects.filter(date__gte=some_day_last_week, date__lt=timezone.now().date(),
+                                     person_of=request.user)
+
+    context = {'form': form, 'food_items': food_items, 'records': records}
+    return render(request, 'profile.html', context)
