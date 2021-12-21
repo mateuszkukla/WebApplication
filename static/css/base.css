@@ -9,24 +9,23 @@ a {
   text-decoration:none !important;
 }
 .logo {
-  font-family: 'Lobster', cursive;
+  font-family: 'serif', cursive;
   padding-top:0px;
   padding-bottom:12px;
   font-size: 60px;
   color: #1488CC;  /* fallback for old browsers */
   color: -webkit-linear-gradient(to right, #2B32B2, #1488CC);  /* Chrome 10-25, Safari 5.1-6 */
   color: linear-gradient(to right, #2B32B2, #1488CC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  
+
 }
 
 #navbar-primary.navbar-default .navbar-nav {
   width: 100%;
   text-align: center;
 background: #2193b0;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to right, #6dd5ed, #2193b0);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to right, #6dd5ed, #2193b0); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+background: -webkit-linear-gradient(to right, #394603, #8AE966);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #394603, #8AE966); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
-  border-radius: 100px ;
 }
 #navbar-primary.navbar-default .navbar-nav > li {
   display: inline-block;
@@ -34,7 +33,7 @@ background: linear-gradient(to right, #6dd5ed, #2193b0); /* W3C, IE 10+/ Edge, F
   vertical-align: top;
   padding-top: 8px;
   padding-bottom: 8px;
-  font-family: 'Grandstander', cursive
+  font-family: 'Times New Roman', cursive
 
 }
 #navbar-primary.navbar-default .navbar-nav > li > a {
@@ -76,7 +75,6 @@ ul.navbar-nav .nav-item:after {
 body {
 font-family: Arial;
 background-color: #3498DB;
-padding: 50px;
 }
 .login {
 margin: 20px auto;
@@ -94,7 +92,7 @@ color: #777;
 }
 
 .login-form {
-text-align: center;
+text-align: left;
 }
 .control-group {
 margin-bottom: 10px;
@@ -151,7 +149,7 @@ background: linear-gradient(to right, #5691c8, #457fca); /* W3C, IE 10+/ Edge, F
 }
 
 #username {
-font-family: 'Pacifico', cursive;
+font-family: 'Times New Roman', cursive;
 padding-top:0px;
 padding-bottom:30px;
 }
@@ -168,11 +166,13 @@ padding-bottom:30px;
 }
 .card {
 
-background: #457fca;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to right, #5691c8, #457fca);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to right, #5691c8, #457fca); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+background: #8AE966;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #394603, #8AE966);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #394603, #8AE966); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
  color:white;
+    margin-left: 20px;
+    margin-right: 20px;
 
 }
 
@@ -188,21 +188,21 @@ background: linear-gradient(to right, #5691c8, #457fca); /* W3C, IE 10+/ Edge, F
   transition:0.5s;
   cursor:pointer;
 }
-.item-card-title{  
+.item-card-title{
   font-size:25px;
   transition:1s;
   cursor:pointer;
 }
-.item-card-title i{  
+.item-card-title i{
   font-size:15px;
   transition:1s;
   cursor:pointer;
   color:#ffa710
 }
 .card-title i:hover{
-  transform: scale(1.25) rotate(100deg); 
+  transform: scale(1.25) rotate(100deg);
   color:#18d4ca;
-  
+
 }
 .card:hover{
   transform: scale(1.05);
@@ -210,7 +210,7 @@ background: linear-gradient(to right, #5691c8, #457fca); /* W3C, IE 10+/ Edge, F
 }
 .card-text{
   height:80px;
-  font-size: 18px;  
+  font-size: 18px;
 }
 
 .card::before, .card::after {
@@ -237,8 +237,8 @@ background: linear-gradient(to right, #5691c8, #457fca); /* W3C, IE 10+/ Edge, F
 
 th{
 background: #1e3c72;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to right, #2a5298, #1e3c72);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to right, #2a5298, #1e3c72); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+background: -webkit-linear-gradient(to right, #394603, #8AE966);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #394603, #8AE966); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 
 }
@@ -249,7 +249,7 @@ font-family: 'Ubuntu', sans-serif;
 }
 
 .headline {
-  font-family: 'Permanent Marker', cursive;
+  font-family: 'Times New Roman', sans-serif;
   padding-top:20px;
  color: #2193b0;  /* fallback for old browsers */
 color:  -webkit-linear-gradient(to right, #6dd5ed, #2193b0);  /* Chrome 10-25, Safari 5.1-6 */
@@ -286,10 +286,7 @@ background: linear-gradient(to bottom, #5691c8, #457fca); /* W3C, IE 10+/ Edge, 
 }
 
 
-.custom-toggler.navbar-toggler { 
+.custom-toggler.navbar-toggler {
   background-color: #0093E9;
-  background-image: linear-gradient(160deg, #0093E9 0%, #80D0C7 100%);
-} 
-          
-    
-
+  background-image: linear-gradient(160deg, #000000 0%, #FFFFFF 100%);
+}

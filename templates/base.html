@@ -7,7 +7,7 @@
 
 	
 	<link href="{% static 'css/base.css' %}" rel="stylesheet">
-	
+
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -15,33 +15,29 @@
 
 </head>
 <body>
-  <a href={% url "home" %}><h1 class="logo text-center">Calorie Drive</h1></a>
+  <!-- <a href={% url "home" %}><h1 class="logo text-center">Calorie Drive</h1></a> -->
   
 <nav id="navbar-primary" class="navbar navbar-expand-lg navbar-default active" role="navigation">
-  
+
     <!-- Brand and toggle get grouped for better mobile display -->
- 
- <div class="container">
-          <div class="navbar-header">
-            <!-- Brand and toggle get grouped for better mobile display -->
-          <button class="navbar-toggler custom-toggler" type="button" data-toggle="collapse" data-target="#resNav"  id='navbar-toggler'>
-            <span class="navbar-toggler-icon" id="ham"></span>
-          </button>
-        </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="resNav">
+
+<div class="collapse navbar-collapse" id="resNav">
             <ul class="navbar-nav justify-content-center">
               {% with url_name=request.resolver_match.url_name %}
               <li class="nav-item"><a class="nav-link  {% if url_name == 'home' %} active{% endif %}" href={% url "home" %}>Home</a></li>
               <li class="nav-item"><a class="nav-link {% if url_name == 'profile' %} active{% endif %}" href={% url "profile" %}>Profile</a></li>
               <li class="nav-item"><a class="nav-link {% if url_name == 'add_food' %} active{% endif %}" href={% url "add_food" %}>Add Food</a></li>
               <li class="nav-item"><a class="nav-link {% if url_name == 'select_food' %} active{% endif %}" href={% url "select_food" %}>Select Food</a></li>
+              {% if user.is_authenticated %}
+                  <li class="nav-item"><a class="nav-link" href={% url "logout" %}>{{ user.get_username }}(logout)</a></li>
+              {% else %}
+                  <li class="nav-item"><a class="nav-link {% if url_name == 'login' %} active{% endif %}" href={% url "login" %}>Log in</a></li>
+                  <li class="nav-item"><a class="nav-link {% if url_name == 'register' %} active{% endif %}" href={% url "register" %}> Sign Up</a></li>
+              {% endif %}
               {% endwith %}
             </ul>
+
             </div>
-            <!-- /.navbar-collapse -->
-      
- </div>
 </nav>
 
 <!-- header role="banner" -->
