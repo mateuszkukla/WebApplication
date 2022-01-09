@@ -24,7 +24,6 @@ django-filter==21.1
 django-plotly-dash==1.6.6
 django-redis==5.1.0
 djangorestframework==3.13.1
-djangorestframework-filters==0.11.1
 dpd-components==0.1.0
 dpd-static-support==0.0.5
 Flask==2.0.2
