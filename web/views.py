@@ -185,11 +185,16 @@ def profile_page(request):
         y_upper = []
         y_lower = []
 
+        for i in records:
+            pass
+
         for idx, record in enumerate(records):
             if record.total_calorie > records[idx].calorie_goal:
-                y_upper.append((record.total_calorie, record.date))
+                y_upper.append(record.total_calorie)
+                y_lower.append(0)
             else:
-                y_lower.append((record.total_calorie, record.date))
+                y_upper.append(0)
+                y_lower.append(record.total_calorie)
 
         calorie_dates = [i.date for i in records]
 
@@ -197,11 +202,11 @@ def profile_page(request):
 
         fig = go.Figure()
         fig.add_scatter(x=calorie_dates, y=calorie_goal)
-        fig.add_trace(go.Bar(x=[i[1] for i in y_upper], y=[i[0] for i in y_upper],
+        fig.add_trace(go.Bar(x=calorie_dates, y=y_upper,
                              base=0,
                              marker_color='crimson',
                              name='Upper Goal'))
-        fig.add_trace(go.Bar(x=[i[1] for i in y_lower], y=[i[0] for i in y_lower],
+        fig.add_trace(go.Bar(x=calorie_dates, y=y_lower,
                              base=0,
                              marker_color='blue',
                              name='Under Goal'))
