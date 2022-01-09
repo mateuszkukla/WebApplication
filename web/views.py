@@ -9,12 +9,19 @@ from django.utils import timezone
 from datetime import date
 from datetime import datetime
 from .filters import FoodFilter
+import dash_core_components as dcc
+import dash_html_components as html
+from plotly.offline import plot
+
+from django_plotly_dash import DjangoDash
+from dash.dependencies import Input, Output
+import plotly.graph_objs as go
+import plotly.graph_objects as gos
 
 
-# home page view
 @login_required(login_url='login')
-def HomePageView(request):
-    # taking the latest profile object
+def home_page_view(request):
+    # Latest profile object
     calories = Profile.objects.filter(person_of=request.user).last()
     calorie_goal = calories.calorie_goal
 
@@ -39,14 +46,13 @@ def HomePageView(request):
         'calorie_goal': calorie_goal,
         'calorie_goal_status': calorie_goal_status,
         'over_calorie': over_calorie,
-        'food_selected_today': all_food_today
+        'food_selected_today': all_food_today,
     }
 
     return render(request, 'home.html', context)
 
 
-# signup page
-def RegisterPage(request):
+def register_page(request):
     if request.user.is_authenticated:
         return redirect('home')
     else:
@@ -63,8 +69,7 @@ def RegisterPage(request):
         return render(request, 'register.html', context)
 
 
-# login page
-def LoginPage(request):
+def login_page(request):
     if request.user.is_authenticated:
         return redirect('home')
     else:
@@ -82,17 +87,17 @@ def LoginPage(request):
         return render(request, 'login.html', context)
 
 
-# logout page
-def LogOutPage(request):
+def log_out_page(request):
     logout(request)
     return redirect('login')
 
 
-# for selecting food each day
 @login_required
 def select_food(request):
     person = Profile.objects.filter(person_of=request.user).last()
+
     # for showing all food items available
+
     food_items = Food.objects.filter(person_of=request.user)
     form = SelectFoodForm(request.user, instance=person)
 
@@ -108,7 +113,6 @@ def select_food(request):
     return render(request, 'select_food.html', context)
 
 
-# for adding new food
 def add_food(request):
     # for showing all food items available
     food_items = Food.objects.filter(person_of=request.user)
@@ -129,7 +133,6 @@ def add_food(request):
     return render(request, 'add_food.html', context)
 
 
-# for updating food given by the user
 @login_required
 def update_food(request, pk):
     food_items = Food.objects.filter(person_of=request.user)
@@ -147,23 +150,22 @@ def update_food(request, pk):
     return render(request, 'add_food.html', context)
 
 
-# for deleting food given by the user
 @login_required
 def delete_food(request, pk):
     food_item = Food.objects.get(id=pk)
     if request.method == "POST":
         food_item.delete()
         return redirect('profile')
-    context = {'food': food_item, }
+    context = {'food': food_item}
     return render(request, 'delete_food.html', context)
 
 
-# profile page of user
 @login_required
-def ProfilePage(request):
+def profile_page(request):
     # getting the lastest profile object for the user
     person = Profile.objects.filter(person_of=request.user).last()
     food_items = Food.objects.filter(person_of=request.user)
+
     form = ProfileForm(instance=person)
 
     if request.method == 'POST':
@@ -179,5 +181,86 @@ def ProfilePage(request):
     records = Profile.objects.filter(date__gte=some_day_last_week, date__lt=timezone.now().date(),
                                      person_of=request.user)
 
-    context = {'form': form, 'food_items': food_items, 'records': records}
+    def scatter_1():
+        y_upper = []
+        y_lower = []
+
+        for idx, record in enumerate(records):
+            if record.total_calorie > records[idx].calorie_goal:
+                y_upper.append((record.total_calorie, record.date))
+            else:
+                y_lower.append((record.total_calorie, record.date))
+
+        calorie_dates = [i.date for i in records]
+
+        calorie_goal = [i.calorie_goal for i in records]
+
+        fig = go.Figure()
+        fig.add_scatter(x=calorie_dates, y=calorie_goal)
+        fig.add_trace(go.Bar(x=[i[1] for i in y_upper], y=[i[0] for i in y_upper],
+                             base=0,
+                             marker_color='crimson',
+                             name='Upper Goal'))
+        fig.add_trace(go.Bar(x=[i[1] for i in y_lower], y=[i[0] for i in y_lower],
+                             base=0,
+                             marker_color='blue',
+                             name='Under Goal'))
+        fig.add_trace(go.Bar(x=calorie_dates, y=calorie_goal,
+                             base=0,
+                             marker_color='lightslategrey',
+                             name='Goal'
+                             ))
+
+        fig_html = fig.to_html()
+        plot_div = plot(fig, output_type='div', include_plotlyjs=False)
+        return fig_html
+
+    context = {'form': form, 'food_items': food_items, 'records': records, 'plot11': scatter_1()}
     return render(request, 'profile.html', context)
+
+
+external_stylesheet = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+app = DjangoDash('SimpleExample', external_stylesheets=external_stylesheet)
+
+app.layout = html.Div([
+    html.H1("Square Root slider"),
+    dcc.Graph(id='slider-graph', animate=True, style={"backgroundColor": "#1a2d46", "color": "ffffff"}),
+    dcc.Slider(
+        id='slider-updatemode',
+        marks={i: '{}'.format(i) for i in range(20)},
+        max=20,
+        value=2,
+        step=1,
+        updatemode='drag',
+    ),
+
+])
+
+
+@app.callback(
+    Output('slider-graph', 'figure'),
+    [Input('slider-updatemode', 'value')])
+def display_value(value):
+    x = []
+    for i in range(value):
+        x.append(i)
+
+    y = []
+    for i in range(value):
+        y.append(i * i)
+
+    graph = go.Scatter(
+        x=x,
+        y=y,
+        name="Manipulate Graph"
+    )
+
+    layout = go.Layout(
+        paper_bgcolor='#27293d',
+        plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(range=[min(x), max(x)]),
+        yaxis=dict(range=[min(y), max(y)]),
+        font=dict(color='white')
+    )
+    return {'data': [graph], 'layout': layout}

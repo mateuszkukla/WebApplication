@@ -43,7 +43,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'django_filters',
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
+    'channels',
+    'channels_redis',
+    'dpd_static_support',
+
 ]
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379),],
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -53,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_plotly_dash.middleware.BaseMiddleware',
 ]
 
 ROOT_URLCONF = 'djangoProject.urls'
@@ -138,7 +153,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
+ASGI_APPLICATION = 'djangoProject.routing.application'
 #LOGIN_REDIRECT_URL = "/"
 #LOGOUT_REDIRECT_URL = "/"
 

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-
 {% block content %}
+    {{ plot11|safe }}
 <div class="container-fluid">
     <h1 class="headline">Your Profile :</h1>
         <div class="row mt-4 mb-4">
@@ -47,6 +47,11 @@
      
    
      </div>
+    {%load plotly_dash%}
+    <div class="{% plotly_class name='SimpleExample' %}" style="height: 100%; width: 100%">
+
+        {%plotly_app name="SimpleExample"%}
+    </div>
 
     <h1 class="text-center headline">All Food Items</h1>
 
@@ -76,5 +81,13 @@
             </tbody>
         </table>  
     </div>
+
+
+
 </div>
+
+
+
+
+
 {% endblock content %}

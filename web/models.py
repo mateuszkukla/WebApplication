@@ -4,9 +4,6 @@ from django.contrib.auth.models import User
 from datetime import date
 
 
-# Create your models here.
-
-
 class Food(models.Model):
     name = models.CharField(max_length=200, null=False)
     quantity = models.PositiveIntegerField(null=False, default=0)
@@ -27,7 +24,7 @@ class Profile(models.Model):
     calorie_goal = models.PositiveIntegerField(default=0)
     all_food_selected_today = models.ManyToManyField(Food, through='PostFood', related_name='inventory')
 
-    def save(self, *args, **kwargs):  # new
+    def save(self, *args, **kwargs):
         if self.food_selected != None:
             self.amount = (self.food_selected.calorie / self.food_selected.quantity)
             self.calorie_count = self.amount * self.quantity
