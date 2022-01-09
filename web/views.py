@@ -182,23 +182,14 @@ def profile_page(request):
                                      person_of=request.user)
 
     def scatter_1():
-        y_upper = []
-        y_lower = []
         y = []
         color = []
         for i in records:
             y.append(i.total_calorie)
             if i.calorie_goal < i.total_calorie:
-                color.append("blue")
-
-
-        for idx, record in enumerate(records):
-            if record.total_calorie > records[idx].calorie_goal:
-                y_upper.append(record.total_calorie)
-                y_lower.append(0)
+                color.append("crimson")
             else:
-                y_upper.append(0)
-                y_lower.append(record.total_calorie)
+                color.append("blue")
 
         calorie_dates = [i.date for i in records]
 
@@ -208,20 +199,15 @@ def profile_page(request):
         fig.add_scatter(x=calorie_dates, y=calorie_goal)
         fig.add_trace(go.Bar(x=calorie_dates, y=y,
                              base=0,
-                             marker_color='crimson',
+                             marker_color=color,
                              name='Upper Goal'))
-        fig.add_trace(go.Bar(x=calorie_dates, y=y_lower,
-                             base=0,
-                             marker_color='blue',
-                             name='Under Goal'))
-        fig.add_trace(go.Bar(x=calorie_dates, y=calorie_goal,
-                             base=0,
-                             marker_color='lightslategrey',
-                             name='Goal'
-                             ))
+        # fig.add_trace(go.Bar(x=calorie_dates, y=calorie_goal,
+        #                      base=0,
+        #                      marker_color='lightslategrey',
+        #                      name='Goal'
+        #                      ))
 
         fig_html = fig.to_html()
-        plot_div = plot(fig, output_type='div', include_plotlyjs=False)
         return fig_html
 
     context = {'form': form, 'food_items': food_items, 'records': records, 'plot11': scatter_1()}
