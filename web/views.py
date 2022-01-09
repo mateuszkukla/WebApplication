@@ -184,9 +184,9 @@ def profile_page(request):
     def scatter_1():
         y_upper = []
         y_lower = []
-
+        y = []
         for i in records:
-            pass
+            y.append(i.total_calorie)
 
         for idx, record in enumerate(records):
             if record.total_calorie > records[idx].calorie_goal:
@@ -202,7 +202,7 @@ def profile_page(request):
 
         fig = go.Figure()
         fig.add_scatter(x=calorie_dates, y=calorie_goal)
-        fig.add_trace(go.Bar(x=calorie_dates, y=y_upper,
+        fig.add_trace(go.Bar(x=calorie_dates, y=y,
                              base=0,
                              marker_color='crimson',
                              name='Upper Goal'))
