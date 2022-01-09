@@ -54,4 +54,3 @@ txaio==21.2.1
 typing_extensions==4.0.1
 Werkzeug==2.0.2
 zope.interface==5.4.0
-django-filters==0.1.0
