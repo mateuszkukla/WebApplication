@@ -185,8 +185,12 @@ def profile_page(request):
         y_upper = []
         y_lower = []
         y = []
+        color = []
         for i in records:
             y.append(i.total_calorie)
+            if i.calorie_goal < i.total_calorie:
+                color.append("blue")
+
 
         for idx, record in enumerate(records):
             if record.total_calorie > records[idx].calorie_goal:
