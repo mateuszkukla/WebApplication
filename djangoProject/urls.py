@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from register import views as v
 import web.views as views
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +30,4 @@ urlpatterns = [
    #path('<int:question_id>/results/', views.results, name='results'),
    #path('<int:question_id>/vote', views.vote, name='vote')
 
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
