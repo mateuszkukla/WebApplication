@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-yt^vr*8o4z0g3h9tgrh!as*14sstg_u*pv-^r7oi%-nrv1@l=)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['aplikacjeinternetowa.herokuapp.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'djangoProject.urls'
@@ -157,3 +158,4 @@ ASGI_APPLICATION = 'djangoProject.routing.application'
 #LOGIN_REDIRECT_URL = "/"
 #LOGOUT_REDIRECT_URL = "/"
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
