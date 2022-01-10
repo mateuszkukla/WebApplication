@@ -196,11 +196,11 @@ def profile_page(request):
         calorie_goal = [i.calorie_goal for i in records]
 
         fig = go.Figure()
-        fig.add_scatter(x=calorie_dates, y=calorie_goal)
+        fig.add_scatter(x=calorie_dates, y=calorie_goal, name='Calorie Goal')
         fig.add_trace(go.Bar(x=calorie_dates, y=y,
                              base=0,
                              marker_color=color,
-                             name='Upper Goal'))
+                             name='Calorie'))
         # fig.add_trace(go.Bar(x=calorie_dates, y=calorie_goal,
         #                      base=0,
         #                      marker_color='lightslategrey',
@@ -214,48 +214,4 @@ def profile_page(request):
     return render(request, 'profile.html', context)
 
 
-external_stylesheet = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = DjangoDash('SimpleExample', external_stylesheets=external_stylesheet)
-
-app.layout = html.Div([
-    html.H1("Square Root slider"),
-    dcc.Graph(id='slider-graph', animate=True, style={"backgroundColor": "#1a2d46", "color": "ffffff"}),
-    dcc.Slider(
-        id='slider-updatemode',
-        marks={i: '{}'.format(i) for i in range(20)},
-        max=20,
-        value=2,
-        step=1,
-        updatemode='drag',
-    ),
-
-])
-
-
-@app.callback(
-    Output('slider-graph', 'figure'),
-    [Input('slider-updatemode', 'value')])
-def display_value(value):
-    x = []
-    for i in range(value):
-        x.append(i)
-
-    y = []
-    for i in range(value):
-        y.append(i * i)
-
-    graph = go.Scatter(
-        x=x,
-        y=y,
-        name="Manipulate Graph"
-    )
-
-    layout = go.Layout(
-        paper_bgcolor='#27293d',
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(range=[min(x), max(x)]),
-        yaxis=dict(range=[min(y), max(y)]),
-        font=dict(color='white')
-    )
-    return {'data': [graph], 'layout': layout}
